@@ -1,6 +1,14 @@
 # React Native Swipeable [![NPM version][npm-image]][npm-url]
 
-A powerful React Native swipe component.  Supports both iOS and Android.
+---
+
+Fork modifications:
+
+* add a instance func to open right buttons. see the description below.
+
+---
+
+A powerful React Native swipe component. Supports both iOS and Android.
 
 <img src="https://raw.githubusercontent.com/jshanson7/react-native-swipeable/master/demo.gif" width="310">
 
@@ -20,8 +28,12 @@ import Swipeable from 'react-native-swipeable';
 const leftContent = <Text>Pull to activate</Text>;
 
 const rightButtons = [
-  <TouchableHighlight><Text>Button 1</Text></TouchableHighlight>,
-  <TouchableHighlight><Text>Button 2</Text></TouchableHighlight>
+  <TouchableHighlight>
+    <Text>Button 1</Text>
+  </TouchableHighlight>,
+  <TouchableHighlight>
+    <Text>Button 2</Text>
+  </TouchableHighlight>
 ];
 
 function MyListItem() {
@@ -36,7 +48,7 @@ function MyListItem() {
 ### Props
 
 | prop                            | type         | default | description                                                                               |
-|---------------------------------|--------------|---------|-------------------------------------------------------------------------------------------|
+| ------------------------------- | ------------ | ------- | ----------------------------------------------------------------------------------------- |
 | `children`                      | renderable   | `null`  | swipeable content                                                                         |
 | `leftContent`                   | renderable   | `null`  | (optional) left content visible during pull action                                        |
 | `rightContent`                  | renderable   | `null`  | (optional) right content visible during pull action                                       |
@@ -59,11 +71,10 @@ function MyListItem() {
 
 #### recenter()
 
-Imperatively reset swipeable component back to initial position.  This is useful if buttons are exposed and the user has begun scrolling the parent view.
+Imperatively reset swipeable component back to initial position. This is useful if buttons are exposed and the user has begun scrolling the parent view.
 
 ```javascript
 class MyListItem extends Component {
-
   swipeable = null;
 
   handleUserBeganScrollingParentView() {
@@ -72,7 +83,10 @@ class MyListItem extends Component {
 
   render() {
     return (
-      <Swipeable onRef={ref => this.swipeable = ref} rightButtons={rightButtons}>
+      <Swipeable
+        onRef={ref => (this.swipeable = ref)}
+        rightButtons={rightButtons}
+      >
         <Text>My swipeable content</Text>
       </Swipeable>
     );
@@ -80,9 +94,43 @@ class MyListItem extends Component {
 }
 ```
 
+#### openRightButtons()
+
+If you want to open right buttons with animation by tapping from parent view, you might need this.
+
+```javascript
+class MyListItem extends Component {
+  swipeable = null;
+
+  openRightMenu() {
+    this.swipeable.openRightButtons();
+  }
+
+  render() {
+    return (
+      <View>
+         <Swipeable
+            onRef={ref => (this.swipeable = ref)}
+            rightButtons={rightButtons}
+         >
+            <Text>My swipeable content</Text>
+          </Swipeable>
+		<TouchableOpacity
+		  onPress={() => {
+         	this.openRightMenu();
+           }}
+         >
+           <Text>Open</Text>
+	     </TouchableOpacity>
+	  </View>
+    );
+  }
+}
+```
+
 ## Example
 
-To run [the example](https://github.com/jshanson7/react-native-swipeable/blob/master/example/swipeable-example.js):
+To run [the example](https://github.com/oojikoo/react-native-swipeable/blob/master/example/swipeable-example.js):
 
 ```sh
 npm run build
@@ -97,7 +145,7 @@ react-native run-ios # or run-android
 
 > Action being triggered more than once ([#3](https://github.com/jshanson7/react-native-swipeable/issues/3))
 
-This seems to occur occasionally (but not always) with certain `ScrollView` and `ListView` configurations.  The fix is simple though, just ensure that `scrollEnabled` is set to `false` while the user is swiping a row.
+This seems to occur occasionally (but not always) with certain `ScrollView` and `ListView` configurations. The fix is simple though, just ensure that `scrollEnabled` is set to `false` while the user is swiping a row.
 
 ```js
 <ScrollView scrollEnabled={!this.state.isSwiping}>
@@ -107,7 +155,9 @@ This seems to occur occasionally (but not always) with certain `ScrollView` and 
   </Swipeable>
 </ScrollView>
 ```
+
 or:
+
 ```js
 <ListView
   scrollEnabled={!this.state.isSwiping}
